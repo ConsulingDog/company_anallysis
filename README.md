@@ -21,30 +21,30 @@
 
 ### 1. 安装依赖
 
-\`\`\`bash
+```bash
 npm install
-\`\`\`
+```
 
 ### 2. 配置环境变量
 
-复制 \`.env.local\` 文件并配置你的Kimi API密钥：
+复制 `.env.local` 文件并配置你的Kimi API密钥：
 
-\`\`\`bash
+```bash
 cp .env.local.example .env.local
-\`\`\`
+```
 
-编辑 \`.env.local\`：
+编辑 `.env.local`：
 
-\`\`\`
+```
 KIMI_API_KEY=your_kimi_api_key_here
 KIMI_BASE_URL=https://api.moonshot.cn/v1
-\`\`\`
+```
 
 ### 3. 启动开发服务器
 
-\`\`\`bash
+```bash
 npm run dev
-\`\`\`
+```
 
 打开 [http://localhost:3000](http://localhost:3000) 查看应用。
 
@@ -75,7 +75,7 @@ npm run dev
 
 ### 联网搜索功能
 
-应用集成了Kimi K2的内置联网搜索功能 <mcreference link="https://platform.moonshot.cn/docs/guide/use-web-search#web_search-%E6%89%A7%E8%A1%8C" index="1">1</mcreference>，能够：
+应用集成了Kimi K2的内置联网搜索功能，能够：
 
 - 自动判断是否需要联网搜索
 - 获取最新的公司和人员信息
@@ -83,7 +83,7 @@ npm run dev
 
 ## 项目结构
 
-\`\`\`
+```
 ├── app/
 │   ├── api/chat/          # API路由
 │   ├── globals.css        # 全局样式
@@ -95,7 +95,7 @@ npm run dev
 │   ├── kimi-client.ts    # Kimi API客户端
 │   └── prompts.ts        # 提示词配置
 └── README.md
-\`\`\`
+```
 
 ## API说明
 
@@ -104,26 +104,26 @@ npm run dev
 发送聊天消息并获取分析结果。
 
 **请求体**:
-\`\`\`json
+```json
 {
   "message": "查询内容",
   "useWebSearch": true
 }
-\`\`\`
+```
 
 **响应**:
-\`\`\`json
+```json
 {
   "message": "分析结果",
   "usedWebSearch": true
 }
-\`\`\`
+```
 
 ## 开发说明
 
 ### 自定义提示词
 
-可以在 \`lib/prompts.ts\` 中修改系统提示词，调整分析逻辑和输出格式。
+可以在 `lib/prompts.ts` 中修改系统提示词，调整分析逻辑和输出格式。
 
 ### 扩展功能
 
