@@ -134,7 +134,7 @@ export const PROMPTS = {
 
 **零容忍标准**：绝不输出未经验证的信息，绝不编造不存在的人员或经历！`,
     userTemplate: "请对 {name} 进行深度企业情报分析，重点挖掘团队中每个人基于什么样的过去经验发现了本次创业的idea，并把本次创业做的成功。",
-    temperature: 0.2,
+    temperature: 0,
     maxTokens: 4000
   } as PromptConfig
 };
