@@ -1,6 +1,7 @@
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
+import { useSearchParams, useRouter } from 'next/navigation';
 
 interface Message {
   id: string;
@@ -21,6 +22,8 @@ export default function ChatInterface() {
   const [isLoading, setIsLoading] = useState(false);
   const [useWebSearch, setUseWebSearch] = useState(true);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const searchParams = useSearchParams();
+  const router = useRouter();
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -29,6 +32,77 @@ export default function ChatInterface() {
   useEffect(() => {
     scrollToBottom();
   }, [messages]);
+
+  const handleAutoSearch = useCallback(async (query: string) => {
+    if (!query.trim() || isLoading) return;
+
+    const userMessage: Message = {
+      id: Date.now().toString(),
+      content: query,
+      role: 'user',
+      timestamp: new Date()
+    };
+
+    setMessages(prev => [...prev, userMessage]);
+    setInputValue('');
+    setIsLoading(true);
+
+    try {
+      const response = await fetch('/api/chat', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          message: query,
+          useWebSearch: useWebSearch
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('网络请求失败');
+      }
+
+      const data = await response.json();
+
+      if (data.error) {
+        throw new Error(data.error);
+      }
+
+      const assistantMessage: Message = {
+        id: (Date.now() + 1).toString(),
+        content: data.message,
+        role: 'assistant',
+        timestamp: new Date(),
+        usedWebSearch: data.usedWebSearch,
+        searchInfo: data.searchInfo
+      };
+
+      setMessages(prev => [...prev, assistantMessage]);
+    } catch (error) {
+      const errorMessage: Message = {
+        id: (Date.now() + 1).toString(),
+        content: `抱歉，发生了错误：${error instanceof Error ? error.message : '未知错误'}`,
+        role: 'assistant',
+        timestamp: new Date()
+      };
+      setMessages(prev => [...prev, errorMessage]);
+    } finally {
+      setIsLoading(false);
+    }
+  }, [isLoading, useWebSearch]);
+
+  // 处理从主页传递的查询参数
+  useEffect(() => {
+    const query = searchParams.get('query');
+    if (query) {
+      setInputValue(query);
+      // 自动发送查询
+      setTimeout(() => {
+        handleAutoSearch(query);
+      }, 500);
+    }
+  }, [searchParams, handleAutoSearch]);
 
   const sendMessage = async () => {
     if (!inputValue.trim() || isLoading) return;
@@ -155,8 +229,19 @@ export default function ChatInterface() {
       <div className="bg-white rounded-lg shadow-lg flex flex-col chat-container">
         {/* Header */}
         <div className="bg-gradient-to-r from-blue-600 to-purple-600 text-white p-4 rounded-t-lg">
-          <h1 className="text-xl font-bold">公司实体分析聊天助手</h1>
-          <p className="text-sm opacity-90">基于Kimi K2的智能公司实体规范化和人员分析工具</p>
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-xl font-bold">公司实体分析聊天助手</h1>
+              <p className="text-sm opacity-90">基于Kimi K2的智能公司实体规范化和人员分析工具</p>
+            </div>
+            <button
+              onClick={() => router.push('/')}
+              className="bg-white/20 hover:bg-white/30 px-4 py-2 rounded-lg transition-colors flex items-center space-x-2"
+            >
+              <span>←</span>
+              <span>返回主页</span>
+            </button>
+          </div>
         </div>
 
         {/* Messages */}

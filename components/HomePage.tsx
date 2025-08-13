@@ -109,8 +109,11 @@ export default function HomePage() {
 
   const handleSearch = () => {
     if (searchQuery.trim()) {
-      // 跳转到聊天页面并传递搜索查询
-      router.push(`/chat?query=${encodeURIComponent(searchQuery)}`);
+      // 跳转到白板页面并传递搜索查询
+      router.push(`/whiteboard?query=${encodeURIComponent(searchQuery)}`);
+    } else {
+      // 如果搜索为空，跳转到空白板
+      router.push('/whiteboard');
     }
   };
 
